@@ -3,11 +3,11 @@
 <head>
   <title>Employee</title>
   <script src="js/jquery-3.6.3.min.js"></script>
-  <script src="js/jquery-ui.min.js"></script>
+  <!-- <script src="js/jquery-ui.min.js"></script> -->
 </head>
 <body>
 <!-- HTML-->
-<form id="employee-form" action="http://localhost:8080/employees">
+<form id="employee-form">
   <h1>Employee Data</h1>
   <table>
   <tr class="row">
@@ -92,18 +92,18 @@
   </tr>
   <tr class="row">
     <td><label for="currentEmployee">Current Employee</label></td>
-    <td><input type="checkbox" id="currentEmployee" name="currentEmployee" value="Y" placeholder="Current Employee Flag"  /></td>
+    <td><input type="checkbox" id="currentEmployee" name="currentEmployee" value="" placeholder="Current Employee Flag"  /></td>
   </tr>
   <tr class="row">
     <td>&nbsp;</td>
     <td><button type="submit" class="ui-button">Send</button></td>
   </tr>
   </table>
+  <p></p>
 </form>
 
 <script>
   $( document ).ready(function() {
-    //console.log( "document loaded" );
 
     //$(".ui-dialog", ".ui-dialog-buttonpane").css("text-align", "center");
     //$(".ui-dialog", ".ui-dialog-buttonpane", ".ui-dialog-buttonset").css("float", "none");
@@ -122,6 +122,13 @@
       "border", "2px solid #eee",
       "border-radius", "10px",
       "box-shadow", "0 0 15px 4px rgba(0,0,0,0.06)");
+
+    $('#currentEmployee').val($(this).is(':checked'));
+
+    $('#currentEmployee').click(function() {
+      $('#currentEmployee').val($(this).is(':checked'));
+    });
+
   });
 </script>
 
@@ -148,11 +155,23 @@
   }
 
   $("#employee-form").on("submit", function (e) {
-    //e.preventDefault();
+    e.preventDefault();
     const form = $(e.target);
     const json = convertFormToJSON(form);
     console.log(json);
+    $.ajax("http://localhost:8080/employees", {
+      type: "POST",
+      data: {data: json },
+      dataType: "json",
+      success: function(data, status, xhr) {
+        $("p").append("Status: " + status + ", data: " + data);
+      },
+      error: function(jqXhr, textStatus, errorMessage) {
+        $("p").append("Error: " + errorMessage);
+      }
+    });
   });
 </script>
 </body>
 </html>
+
